@@ -1,11 +1,11 @@
 {
   "name": "poi-plugin-atk-calc",
   "version": "0.0.1",
-  "description": "A plugin for poi",
+  "description": "A plugin for poi that calculate attack power.",
   "main": "index.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xiluoshiro/plugin01.git"
+    "url": "git+https://github.com/xiluoshiro/poi-plugin-atk-calc.git"
   },
   "keywords": [
     "plugin"
@@ -16,13 +16,14 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/xiluoshiro/plugin01/issues"
+    "url": "https://github.com/xiluoshiro/poi-plugin-atk-calc/issues"
   },
-  "homepage": "https://github.com/xiluoshiro/plugin01#readme",
+  "homepage": "https://github.com/xiluoshiro/poi-plugin-atk-calc#readme",
   "poiPlugin": {
     "title": "Attack power calculator",
     "description": "A calculator for attack power",
-    "i18nDir": "./i18n"
+    "i18nDir": "./i18n",
+    "icon": "fa/magic"
   },
   "devDependencies": {
     "@blueprintjs/core": "^4.8.0",

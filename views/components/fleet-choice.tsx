@@ -68,21 +68,21 @@ const FleetChoice = connect((state: Istate) => {
           disabled={fleetNum > 2}
         />
 
-        &nbsp;{t('Enemy_fleet_type') + ': '}&nbsp;
+        {t('Enemy_fleet_type') + ': '}&nbsp;
         <HTMLSelect
           iconProps={{ style: { paddingTop: '6px' } }}
           options={transOptions(enemyFleetTypes)}
           onChange={event => setEnemyFleetType(event.target.value)}
         />
 
-        &nbsp;{t('Formation') + ': '}&nbsp;
+        {t('Formation') + ': '}&nbsp;
         <HTMLSelect
           iconProps={{ style: { paddingTop: '6px' } }}
           options={transOptions(formationArray)}
           onChange={event => setFormation(event.target.value)}
         />
 
-        &nbsp;{t('Engagement') + ': '}&nbsp;
+        {t('Engagement') + ': '}&nbsp;
         <HTMLSelect
           iconProps={{ style: { paddingTop: '6px' } }}
           options={transOptions(engagements)}
