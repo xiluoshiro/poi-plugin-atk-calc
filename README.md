@@ -13,5 +13,11 @@ Click to show different attack type(like cut-in).
 
 [![npm version](https://badge.fury.io/js/poi-plugin-atk-calc.svg)](https://badge.fury.io/js/poi-plugin-atk-calc)
 
+### 0.0.3
+Fix bug: night aircraft.
+
+### 0.0.2
+Add readme and change layout.
+
 ### 0.0.1
 Basic functions.

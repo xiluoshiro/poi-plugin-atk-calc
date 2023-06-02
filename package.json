@@ -1,6 +1,6 @@
 {
   "name": "poi-plugin-atk-calc",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A plugin for poi that calculate attack power.",
   "main": "index.ts",
   "repository": {

@@ -87,10 +87,6 @@ const checkNightAttack = (fleetState: IfleetState, shipState: IshipState, slotsA
   if (!shipTypeCV.includes(shipConstInfo.api_stype)) {
     return 'night';
   }
-  // 夜間砲撃空母
-  if (nightShellingCV.includes(shipId)) {
-    return 'night';
-  }
 
   // 夜間航空攻撃：装母 / 非中破
   if (shipConstInfo.api_stype === 18 || shipDamaged < 2) {
@@ -120,6 +116,11 @@ const checkNightAttack = (fleetState: IfleetState, shipState: IshipState, slotsA
     if (nightSwordfishCV.includes(shipId) && flag) {
       return 'night_swordfish';
     }
+  }
+
+  // 夜間砲撃空母
+  if (nightShellingCV.includes(shipId)) {
+    return 'night';
   }
 
   return 'no_attack';
