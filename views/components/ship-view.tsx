@@ -64,8 +64,9 @@ const ShipView = connect((state: Istate) => {
     return shipInfo.api_ship_id;
   });
 
-  // 夜侦
+  // 舰队内有效装备
   let nightTouch = -1;
+  let balloon = 0;
   shipsInfo.forEach(ship => {
     const slots = [...ship.api_slot];
     slots.push(ship.api_slot_ex);
@@ -78,8 +79,12 @@ const ShipView = connect((state: Istate) => {
           nightTouch = Math.max(nightTouch, equipConstInfo.api_houm);
         }
       }
+      if (equipInfo.api_slotitem_id == 513) {                         // 阻塞気球
+          balloon++;
+      }
     })
   })
+  const fleetEquip = {nightTouch, balloon};
   
   return (
     <div>
@@ -98,7 +103,7 @@ const ShipView = connect((state: Istate) => {
                 <ShipName>{shipConstInfo.api_name}</ShipName>
               </ShipCardLeft>
               <ShipDetail
-                fleetState={{...fleetState, nightTouch}}
+                fleetState={{...fleetState, fleetEquip}}
                 shipState={{
                   shipInfo,
                   shipConstInfo,

@@ -33,8 +33,9 @@ export const shipBig7: readonly number[] = [601, 1496, 913, 918, 571, 576, 80, 2
 export const etAircraftShelling: readonly number[] = [7, 8, 57];
 // 爆撃機: api_type[2]: 艦上爆撃機、噴式戦闘爆撃機
 export const etBomber: readonly number[] = [7, 57];
-// id: 後期型潜水艦魚雷：後期型艦首魚雷(6門) 熟練、後期型53cm艦首魚雷(8門)、21inch艦首魚雷発射管6門(後期型)、潜水艦後部魚雷発射管4門(後期型)、後期型艦首魚雷(4門) 熟練
-export const etSSNewTorpedo: readonly number[] = [213, 214, 383, 441, 443, 457, 461];
+// id: 後期型潜水艦魚雷：後期型艦首魚雷(6門) 熟練、後期型53cm艦首魚雷(8門)、21inch艦首魚雷発射管6門(後期型)、潜水艦後部魚雷発射管4門(後期型)
+// 、後期型艦首魚雷(4門) 熟練、21inch艦首魚雷発射管4門(後期型)
+export const etSSNewTorpedo: readonly number[] = [213, 214, 383, 441, 443, 457, 461, 512];
 // api_type[2]: 水上机
 export const etSeaplane: readonly number[] = [10, 11];
 // id: 瑞雲系
@@ -45,6 +46,10 @@ export const etSuisei634: readonly number[] = [291, 292, 319];
 export const etRadarYamato: readonly number[] = [142, 460];
 // api_type[2]: 噴式機
 export const etJet: readonly number[] = [56, 57, 58, 59];
+// api_type[2]: 艦上爆撃機、艦上攻撃機、噴式戦闘爆撃機、水上爆撃機、陸上攻撃機、大型飛行艇
+export const etAircraftCritical: readonly number[] = [7, 8, 57, 11, 41, 47];
+// id: 一式戦隼(20戦隊)系
+export const etHayabushiS20: readonly number[] = [489, 491];
 
 // 船只损伤
 export const damagedStatus: readonly string[] = ['healthy', 'slightly', 'moderately', 'heavily', 'sunken'];
@@ -63,8 +68,8 @@ export const nightSwordfishCV = [393, 515];
 export const nightSwordfish = [242, 243, 244];
 // 夜間砲撃空母: Graf Zeppelin、Saratoga(未改造)、加賀改二護、大鷹型改二
 export const nightShellingCV = [353, 432, 433, 646, 529, 536, 889];
-// 夜偵: 九八式水上偵察機(夜偵)、零式水上偵察機11型乙改(夜偵)、Loire 130M
-export const nightSeaplane = [102, 469, 471];
+// 夜偵: 九八式水上偵察機(夜偵)、零式水上偵察機11型乙改(夜偵)、Loire 130M、Walrus、Sea Otter
+export const nightSeaplane = [102, 469, 471, 510, 515];
 // 夜戦・夜攻
 export const nightFighter = [254, 255, 338, 339, 473];
 export const nightTorpedoBomber = [257, 344, 345, 373, 374, 389];
@@ -74,15 +79,15 @@ export const nightAircraftB = [...nightSwordfish, 154, 320];
 // 夜間飛行機
 export const nightAircraft = [...nightAircraftA, ...nightAircraftB];
 
-// 対陸艦爆: 彗星一二、九九二二、南山、F4U、FM2、SB2C、Ju87C
+// 対陸艦爆: 彗星一二、九九二二、南山、F4U-1D、F4U-4、FM2、SB2C系、Ju87C系
 export const antilandbaseDB = [319, 320, 391, 392, 148, 233, 474, 277, 420, 421, 64, 305, 306];
 // 軽量単装砲：14cm単装砲、15.2cm単装砲
 export const lightSingleGunCL = [4, 11];
 // 軽量連装砲：14cm連装砲、14cm連装砲改、15.2cm連装砲、15.2cm連装砲改、15.2cm連装砲改二、6inch 連装速射砲 Mk.XXI、Bofors15.2cm連装砲 Model1930
-// 、Bofors 15cm連装速射砲 Mk.9 Model 1938、Bofors 15cm連装速射砲 Mk.9改＋単装速射砲 Mk.10改 Model 1938
-export const lightTwinGunCL = [119, 310, 65, 139, 407, 359, 303, 360, 361];
+// 、Bofors 15cm連装速射砲 Mk.9 Model 1938、Bofors 15cm連装速射砲 Mk.9改＋単装速射砲 Mk.10改 Model 1938、14cm連装砲改二
+export const lightTwinGunCL = [119, 310, 65, 139, 407, 359, 303, 360, 361, 518];
 
-// 改修补正：230514
+// 改修补正
 export const improvementBonus = {
   1: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },         // 小口径主砲
   2: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },         // 中口径主砲
@@ -92,16 +97,16 @@ export const improvementBonus = {
   7: { day_shelling: { formula: 'multi', factor: 0.2 }, asw: { formula: 'multi', factor: 0.2 } },     // 艦上爆撃機 recheck
   8: { day_shelling: { formula: 'multi', factor: 0.2 }, asw: { formula: 'multi', factor: 0.2 } },     // 艦上攻撃機
   14: { day_shelling: { formula: 'sqrt', factor: 0.75 }, asw: { formula: 'sqrt', factor: 1 } },       // ソナー
-  15: { day_shelling: { formula: 'sqrt', factor: 0.75 }, asw: { formula: 'sqrt', factor: 1 } },       // 爆雷投射機 recheck
+  15: { day_shelling: { formula: 'sqrt', factor: 0.75 }, asw: { formula: 'sqrt', factor: 1 } },       // 爆雷 recheck
   // 16: 増設バルジ?
   18: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 対空強化弾
   19: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 対艦強化弾
   // 20: VT信管?
   21: { day_shelling: { formula: 'sqrt', factor: 1 }, torpedo: { formula: 'sqrt', factor: 1.2 } },    // 対空機銃
-  22: { night: { formula: 'sqrt', factor: 1 } },                                                    // 特殊潜航艇
+  22: { night: { formula: 'sqrt', factor: 1 } },                                                      // 特殊潜航艇
   24: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 上陸用舟艇
-  25: { asw: { formula: 'multi', factor: 0.2 } },                                                   // オートジャイロ recheck
-  26: { asw: { formula: 'multi', factor: 0.2 } },                                                   // 対潜哨戒機 recheck
+  25: { asw: { formula: 'multi', factor: 0.2 } },                                                     // オートジャイロ recheck
+  26: { asw: { formula: 'multi', factor: 0.2 } },                                                     // 対潜哨戒機 recheck
   29: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 探照灯
   32: { day_shelling: { formula: 'sqrt', factor: 1 }, torpedo: { formula: 'multi', factor: 0.2 }, night: { formula: 'multi', factor: 0.2 } },   // 潜水艦魚雷
   34: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 司令部施設
@@ -113,15 +118,16 @@ export const improvementBonus = {
   40: { day_shelling: { formula: 'sqrt', factor: 0.75 }, asw: { formula: 'sqrt', factor: 1 } },       // 大型ソナー
   42: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 大型探照灯
   46: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 特型内火艇
+  54: { day_shelling: { formula: 'sqrt', factor: 1 }, night: { formula: 'sqrt', factor: 1 } },        // 水上艦装備
 } as IimprovementBonus;
 // recheck
 export const improvementBonusRecheck = {
   401: { day_shelling: { formula: 'multi', factor: 0.2 }, night: { formula: 'multi', factor: 0.2 } }, // 副砲(分類B)
   402: { day_shelling: { formula: 'multi', factor: 0.3 }, night: { formula: 'multi', factor: 0.3 } }, // 副砲(分類C)
   // 701: 爆戦
-  1501: { asw: { formula: 'sqrt', factor: 1 } },                                                    // 増加爆雷
-  2501: { asw: { formula: 'multi', factor: 0.3 } },                                                 // 回転翼機 (対潜値>10)
-  2601: { asw: { formula: 'multi', factor: 0.3 } },                                                 // 三式指揮連絡機(対潜)
+  1501: { asw: { formula: 'sqrt', factor: 1 } },                                                      // 増加爆雷
+  2501: { asw: { formula: 'multi', factor: 0.3 } },                                                   // 回転翼機 (対潜値>10)
+  2601: { asw: { formula: 'multi', factor: 0.3 } },                                                   // 三式指揮連絡機(対潜)
 } as IimprovementBonus;
 // 副砲(分類B): 12.7cm連装高角砲、8cm高角砲、10cm連装高角砲(砲架)、8cm高角砲改＋増設機銃、10cm連装高角砲改＋増設機銃、10cm連装高角砲群 集中配備
 export const secondaryGunB = [10, 66, 71, 220, 275, 464];

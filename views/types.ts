@@ -83,6 +83,10 @@ export interface IconstEquip {
   readonly api_baku: number;     // 爆装
   readonly api_saku: number;     // 索敵
 }
+export interface IfleetEquip {
+  nightTouch: number;   // 夜侦
+  balloon: number;      // 气球
+}
 
 // props
 export interface IfleetState {
@@ -93,7 +97,7 @@ export interface IfleetState {
   fleetType: string;
   enemyFleetType: string;
   isCombined: boolean;
-  nightTouch?: number;
+  fleetEquip?: IfleetEquip;
 }
 
 export interface IshipState {

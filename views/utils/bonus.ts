@@ -1,8 +1,9 @@
 import { IshipState, IslotState, ItypeCI } from "../types";
 import {
   TattackMode, improvementBonus, improvementBonusRecheck, fighterBomber, secondaryGunB, secondaryGunC,
-  depthCharge, nightAircraft, nightAircraftA, nightSwordfish, ECHELON_6V12, VANGUARD_TOP, shipTypeCLex, lightSingleGunCL,
-  lightTwinGunCL, shipItalianCA, THRESHOLD_DAY_SHELLING, THRESHOLD_NIGHT, THRESHOLD_TORPEDO, THRESHOLD_DEFAULT, daytimeCVCITypes, etAircraftShelling
+  depthCharge, nightAircraft, nightAircraftA, nightSwordfish, ECHELON_6V12, VANGUARD_TOP, shipTypeCLex,
+  lightSingleGunCL, lightTwinGunCL, shipItalianCA, THRESHOLD_DAY_SHELLING, THRESHOLD_NIGHT, THRESHOLD_TORPEDO,
+  THRESHOLD_DEFAULT, daytimeCVCITypes, etAircraftCritical, etHayabushiS20
 } from "../constants";
 
 // 联合舰队补正
@@ -291,6 +292,19 @@ export const getAPShellBonus = (slotsArray: IslotState[]) => {
   return 1;
 }
 
+// 气球补正
+export const getBalloonBonus = (balloon: number) => {
+  if (balloon == 1) {
+    return 1.02;
+  } else if (balloon == 2) {
+    return 1.04;
+  } else if (balloon >= 3) {
+    return 1.06;
+  } else {
+    return 1;                 // should not happen
+  }
+}
+
 /*
  * 暴击补正：推算 内部熟练度          [BUG]
  *
@@ -354,12 +368,18 @@ export const getCriticalBonus = (slotsArray: IslotState[], attackMode: TattackMo
   if (!(<readonly string[]>daytimeCVCITypes).includes(attackType.type)) {
     // 非战爆CI
     let airRatio = 1;
-    slotsArray.forEach((slot, index) => {
-      if (slot.carrying > 0 && slot.info.api_alv && etAircraftShelling.includes(slot.constInfo.api_type[2])) {
-        const alv = slot.info.api_alv;
-        const airBonus = Math.floor(Math.sqrt(proficiencyInner(alv)) + paramC(alv)) / 200;
-        airRatio += index === 0 ? airBonus * 2 : airBonus;
+    slotsArray.filter(slot => slot.carrying > 0 && slot.info.api_alv).forEach((slot, index) => {
+      let airBonus = 0;
+      const alv = slot.info.api_alv || 0;
+      // 艦上攻撃機(艦攻)、艦上爆撃機(艦爆)、噴式戦闘爆撃機(噴式機)、水上爆撃機(水爆)、陸上攻撃機(陸攻)、大型飛行艇(二式大艇等)
+      if (etAircraftCritical.includes(slot.constInfo.api_type[2])) {
+        airBonus = Math.floor(Math.sqrt(proficiencyInner(alv)) + paramC(alv)) / 200;
       }
+      // 一式戦 隼II型改(20戦隊)/隼III型改(熟練/20戦隊)
+      if (etHayabushiS20.includes(slot.info.api_slotitem_id)) {
+        airBonus = Math.floor(Math.sqrt(proficiencyInner(alv)) + paramC(alv)) / 250;
+      }
+      airRatio += index === 0 ? airBonus * 2 : airBonus;
     });
     return ratio * airRatio;
   } else {
@@ -370,7 +390,7 @@ export const getCriticalBonus = (slotsArray: IslotState[], attackMode: TattackMo
     let count = 0;
     slotsArray.forEach((slot, index) => {
       if (slot.carrying > 0 && slot.info.api_alv) {
-        const isCalc = (index === 1 && attackType.type === 'f_b_a') || etAircraftShelling.includes(slot.constInfo.api_type[2]);
+        const isCalc = (index === 1 && attackType.type === 'f_b_a') || etAircraftCritical.includes(slot.constInfo.api_type[2]);
         if (isCalc) {
           profic += proficiencyInner(slot.info.api_alv);
           count++;

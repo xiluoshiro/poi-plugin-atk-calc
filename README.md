@@ -13,6 +13,11 @@ Click to show different attack type(like cut-in).
 
 [![npm version](https://badge.fury.io/js/poi-plugin-atk-calc.svg)](https://badge.fury.io/js/poi-plugin-atk-calc)
 
+### 0.1.0
+Fix bug: night aircraft loss normal attack.
+Update: '特大発動艇(III号戦車/北アフリカ仕様)', '特大発動艇+III号戦車J型', '阻塞気球'.
+Update: Nelson class special attack.
+
 ### 0.0.3
 Fix bug: night aircraft.
 

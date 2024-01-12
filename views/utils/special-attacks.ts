@@ -79,7 +79,7 @@ const checkKongoIICTouch = (fleetState: IfleetState, shipState: IshipState): Ity
 };
 
 // Nelson Touch
-const shipNelsonClass = [571, 576];
+const shipNelsonClass = [571, 576, 572, 577];
 const checkNelsonTouch = (fleetState: IfleetState, shipState: IshipState): ItypeCI[] => {
   const { isCombined, fleetNum, formation, engagement } = fleetState;
   const { shipsType, shipsDamaged, shipsID, shipNum } = shipState;
@@ -97,13 +97,11 @@ const checkNelsonTouch = (fleetState: IfleetState, shipState: IshipState): Itype
 
   if (isTouch) {
     let ratio = 2;
-    switch (engagement) {
-      case 'crossing_t_da':
-        ratio *= 1.25;
-        break;
-      default:
-        break;
-    }
+
+    if (engagement === 'crossing_t_da') ratio *= 1.25;            // T不利時に発動する
+    const nelsonClassNum = shipsID.filter((ship, index) => shipsLoc.includes(index + 1) && shipNelsonClass.includes(ship)).length;
+    if (nelsonClassNum > 1) ratio *= shipNum === 1 ? 1.15 : 1.2;  // NelsonとRodneyが2隻とも発動艦にいる
+
     return [{ type: 'special_attack_nelson', ratio }];
   }
   return [];

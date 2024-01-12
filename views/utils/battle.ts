@@ -6,7 +6,7 @@ import {
   shipTypeNightZuiun, shipTypeSS, shipZuiunAttack
 } from "../constants";
 import {
-  capDamage, getAPShellBonus, getCombinedBonus, getConfigGunBonus, getCriticalBonus, getDamagedBonus, getEngagementBonus, getFormationBonus,
+  capDamage, getAPShellBonus, getBalloonBonus, getCombinedBonus, getConfigGunBonus, getCriticalBonus, getDamagedBonus, getEngagementBonus, getFormationBonus,
   getImprovementFP, getNightAircraftBonus, getNightSwordfishBonus, getNightTouchBonus
 } from "./bonus";
 import { getSpecialAttacks } from "./special-attacks";
@@ -45,7 +45,7 @@ const checkDayAttack = (shipState: IshipState, slotsArray: IslotState[], isAntiL
   if (!(shipTypeCV.includes(stype)) && !(shipTypeLikeCV.includes(shipInfo.api_ship_id))) {
     return 'day_shelling';
   }
-  // 大破 / 装母中破
+  // 大破 / 非装母中破
   const noAttack = shipDamaged && (stype === 18 ? shipDamaged >= 3 : shipDamaged >= 2);
   if (noAttack) {
     return 'no_attack';
@@ -152,8 +152,9 @@ const checkAircraftFP = (attackPower: number, shipInfo: Iship, slotsArray: Islot
 
 // 炮击基础攻击力
 const checkBaseFP = (fleetState: IfleetState, shipState: IshipState, slotsArray: IslotState[], attackMode: TattackMode, isAntiLandbase: boolean) => {
-  const { fleetType, enemyFleetType, fleetNum, nightTouch } = fleetState;
+  const { fleetType, enemyFleetType, fleetNum, fleetEquip } = fleetState;
   const { shipInfo } = shipState;
+  const { nightTouch } = fleetEquip!;
 
 
   const firepower = shipInfo.api_karyoku[0];
@@ -201,7 +202,7 @@ const nightCIType: IciType = {
   ss_st_sr: 1.75,
   ss_st_st: 1.6
 };
-const checkNightCI = (shipState: IshipState, slotsArray: IslotState[], isAntiLandbase: boolean) => {
+const checkNightCI = (shipState: IshipState, slotsArray: IslotState[], isAntiLandbase: boolean): ItypeCI[] => {
   const { shipConstInfo } = shipState;
   const shipType = shipConstInfo.api_stype;
 
@@ -297,9 +298,11 @@ const nightAircraftCITYpe = {
   n_ps: 1.2,
   nf_np_np: 1.18
 };
-const checkNightAircraftCI = (slotsArray: IslotState[]): ItypeCI => {
+const checkNightAircraftCI = (slotsArray: IslotState[]): ItypeCI[] => {
 
   let nightFighter = 0, nightTB = 0, phototubeSuisei = 0, nightPlane = 0;
+  const nightCIArr: ItypeCI[] = [];
+
   slotsArray.forEach(slot => {
     const { carrying, constInfo, info } = slot;
     const types = constInfo.api_type || {};
@@ -312,11 +315,18 @@ const checkNightAircraftCI = (slotsArray: IslotState[]): ItypeCI => {
     }
   })
 
-  if (nightFighter >= 2 && nightTB >= 1) return { type: 'nf_nf_ntb', ratio: nightAircraftCITYpe['nf_nf_ntb'] };
-  if (nightFighter >= 1 && nightTB >= 1) return { type: 'nf_ntb', ratio: nightAircraftCITYpe['nf_ntb'] };
-  if ((nightFighter + nightTB >= 1) && phototubeSuisei >= 1) return { type: 'n_ps', ratio: nightAircraftCITYpe['n_ps'] };
-  if (nightFighter >= 1 && nightPlane >= 2) return { type: 'nf_np_np', ratio: nightAircraftCITYpe['nf_np_np'] };
-  return { type: 'normal_attack', ratio: nightAircraftCITYpe['normal_attack'] };
+  if (nightFighter >= 2 && nightTB >= 1) {
+    nightCIArr.push({ type: 'nf_nf_ntb', ratio: nightAircraftCITYpe['nf_nf_ntb'] });
+  } else if (nightFighter >= 1 && nightTB >= 1) {
+    nightCIArr.push({ type: 'nf_ntb', ratio: nightAircraftCITYpe['nf_ntb'] });
+  } else if ((nightFighter + nightTB >= 1) && phototubeSuisei >= 1){
+    nightCIArr.push({ type: 'n_ps', ratio: nightAircraftCITYpe['n_ps'] });
+  } else if (nightFighter >= 1 && nightPlane >= 2) {
+    nightCIArr.push({ type: 'nf_np_np', ratio: nightAircraftCITYpe['nf_np_np'] });
+  }
+
+  nightCIArr.push({ type: 'normal_attack', ratio: nightAircraftCITYpe['normal_attack'] })
+  return nightCIArr;
 };
 
 // 昼战CI
@@ -430,7 +440,7 @@ export const calcCombat = (fleetState: IfleetState, shipState: IshipState, slots
     if (attackMode !== 'night_aircraft') {
       attackTypeArr.push(...checkNightCI(shipState, slotsArray, isAntiLandbase));
     } else {
-      attackTypeArr.push(checkNightAircraftCI(slotsArray));
+      attackTypeArr.push(...checkNightAircraftCI(slotsArray));
     }
     attackTypeArr.forEach(atkType => atkType.ratio ? atkType.attackPower = atkType.ratio * attackPower : false);
   }
@@ -444,6 +454,23 @@ export const calcCombat = (fleetState: IfleetState, shipState: IshipState, slots
   attackTypeArr.forEach(atkType => atkType.attackPower ? atkType.attackPower = capDamage(atkType.attackPower, rawAttackMode) : false);
   attackPower = capDamage(attackPower, rawAttackMode);
 
+  // 昼战特殊攻击
+  if (rawAttackMode === 'day_shelling') {
+    attackTypeArr.push(...getSpecialAttacks(fleetState, shipState, slotsArray, rawAttackMode));   // 舰娘特殊攻击
+    attackTypeArr.push(...checkDaytimeCI(shipState, slotsArray, attackMode, isAntiLandbase));
+    attackTypeArr.forEach(atkType => atkType.ratio ? atkType.attackPower = atkType.ratio * Math.floor(attackPower) : false);
+  }
+  
+  // 潜水舰特殊攻击？
+  
+  // 以下位置理论上无需使用 attackPower，todo: 后续将前面 CI 选择部分优化，防止取分支情况
+
+  // 彻甲弹补正
+  if (isArmor) {
+    attackTypeArr.forEach(atkType => atkType.attackPower ? atkType.attackPower = getAPShellBonus(slotsArray) * atkType.attackPower : false);
+  }
+  attackTypeArr.forEach(atkType => atkType.attackPower ? atkType.attackPower = Math.floor(atkType.attackPower) : false);
+
   // 阈值后对陆, PT补正
   attackTypeArr.forEach(atkType => {
     if (atkType.attackPower) {
@@ -452,28 +479,22 @@ export const calcCombat = (fleetState: IfleetState, shipState: IshipState, slots
     }
   });
 
-  // 昼战特殊攻击
-  if (rawAttackMode === 'day_shelling') {
-    attackPower = checkAntiLandbaseFPAfter(attackPower, shipState, slotsArray, attackMode, rawAttackMode);
-    attackPower = enemyType === 'anti_pt' ? checkAntiPTFP(attackPower, slotsArray, rawAttackMode) : attackPower;
-    attackTypeArr.push(...getSpecialAttacks(fleetState, shipState, slotsArray, rawAttackMode));   // 舰娘特殊攻击
-    attackTypeArr.push(...checkDaytimeCI(shipState, slotsArray, attackMode, isAntiLandbase));
-    attackTypeArr.forEach(atkType => atkType.ratio ? atkType.attackPower = atkType.ratio * Math.floor(attackPower) : false);
-  }
+  // 气球补正
+  attackTypeArr.forEach(atkType => {
+    if (atkType.attackPower && isAntiLandbase) {
+      const { balloon } = fleetState.fleetEquip!;
+      atkType.attackPower *= getBalloonBonus(balloon)
+    }
+  });
 
-  // 潜水舰特殊攻击？
+  // todo: 海域倍卡补正
 
-  // 彻甲弹补正
-  if (isArmor) {
-    attackTypeArr.forEach(atkType => atkType.attackPower ? atkType.attackPower = getAPShellBonus(slotsArray) * atkType.attackPower : false);
-  }
-  attackTypeArr.forEach(atkType => atkType.attackPower ? atkType.attackPower = Math.floor(atkType.attackPower) : false);
-
-  // 暴击补正
+  // 暴击补正、取整
   attackTypeArr.forEach(atkType => {
     const atp = atkType.attackPower || 0;
     atkType.critical = getCriticalBonus(slotsArray, attackMode, atkType);
     atkType.criticalAP = Math.floor(atp * atkType.critical);
+    atkType.attackPower = Math.floor(atp);
   })
 
   return attackTypeArr;

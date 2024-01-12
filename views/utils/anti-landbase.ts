@@ -75,16 +75,16 @@ const MultiBonusAfterCap = {
   rocketType4: [{ supply_depot: 1.2, anchorage_vacances: 1.15, dock: 1.1 },     // 船渠：可能不准
   { supply_depot: 1.4, anchorage_vacances: 1.4, dock: 1.3 }],
   aswMortarsType2: [{ supply_depot: 1.15, anchorage_vacances: 1.1, dock: 1 },   // 船渠：缺乏
-  { supply_depot: 1.2, anchorage_vacances: 1.2, dock: 1 }],                   // 迫击炮集中>=2 对泊地不准
+  { supply_depot: 1.2, anchorage_vacances: 1.2, dock: 1 }],                     // 迫击炮集中>=2 对泊地不准
   seaplane: [{ supply_depot: 1, anchorage_vacances: 1, dock: 1.1 }],
   bomber: [{ supply_depot: 1, anchorage_vacances: 1.4, dock: 1.1 },
-  { supply_depot: 1, anchorage_vacances: 1.75, dock: 1.1 }],                  // 船渠：缺乏喷气
+  { supply_depot: 1, anchorage_vacances: 1.75, dock: 1.1 }],                    // 船渠：缺乏喷气
   landingCraftAll: [{ supply_depot: 1.7, anchorage_vacances: 1.4, dock: 1.1 }],
   craftEx: [{ supply_depot: 1.2, anchorage_vacances: 1.15, dock: 1.1 }],        // 船渠：可能不准
   craftType89: [{ supply_depot: 1.3, anchorage_vacances: 1.2, dock: 1.15 },
   { supply_depot: 1.6, anchorage_vacances: 1.4, dock: 1.15 }],
   craftArmed: [{ supply_depot: 1.5, anchorage_vacances: 1.2, dock: 1.1 },
-  { supply_depot: 1.1, anchorage_vacances: 1.1, dock: 1.1 }],                 // AB艇>=2 缺乏船渠
+  { supply_depot: 1.1, anchorage_vacances: 1.1, dock: 1.1 }],                   // AB艇>=2 缺乏船渠
   m4a1dd: [{ supply_depot: 1.2, anchorage_vacances: 1.8, dock: 1.1 }],
   craftEx11th: [{ supply_depot: 1, anchorage_vacances: 1, dock: 1.4 }],
   amphibiousTanksType2: [{ supply_depot: 1.7, anchorage_vacances: 2.4, dock: 1.2 },
@@ -99,9 +99,9 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
 
   let aaShell = 0, apShell = 0, rocketWG = 0, rocketType4 = 0, aswMortarsType2 = 0, seaplane = 0, bomber = 0;
   let landingCraftAll = 0, landingCraftStar = 0, craftEx = 0, craftType89 = 0, craftExType1 = 0, craftExType97 = 0;
-  let craftExType97Kai = 0, craftPanzerII = 0, craftArmed = 0, craftAB = 0, m4a1dd = 0, amphibiousTanksAll = 0;
-  let craftEx11th = 0, craftExPanzerIII = 0, rocketType4CD = 0, aswMortarsType2CD = 0, amphibiousTanksType2 = 0,
-    amphibiousTanksStar = 0, craft = 0, jet = 0;
+  let craftExType97Kai = 0, craftPanzerIINAF = 0, craftArmed = 0, craftAB = 0, m4a1dd = 0, amphibiousTanksAll = 0;
+  let craftEx11th = 0, craftExPanzerIIINAF = 0, rocketType4CD = 0, aswMortarsType2CD = 0, amphibiousTanksType2 = 0;
+  let amphibiousTanksStar = 0, craft = 0, jet = 0, craftExPanzerIIIJ = 0;
 
   slotsArray.forEach(slot => {
     const types = slot.constInfo.api_type || {};
@@ -162,19 +162,22 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
         craftArmed++;
         break;
       case 436:   // 大発動艇(II号戦車/北アフリカ仕様)
-        craftPanzerII++;
+        craftPanzerIINAF++;
         break;
       case 449:   // 特大発動艇+一式砲戦車
         craftExType1++;
         break;
       case 482:   // 特大発動艇(III号戦車/北アフリカ仕様)
-        craftExPanzerIII++;
+        craftExPanzerIIINAF++;
         break;
       case 494:   // 特大発動艇+チハ
         craftExType97++;
         break;
       case 495:   // 特大発動艇+チハ改
         craftExType97Kai++;
+        break;
+      case 514:   // 特大発動艇+III号戦車J型
+        craftExPanzerIIIJ++;
         break;
       default:
         break;
@@ -201,14 +204,14 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
       if (landingCraftAll >= 1) {
         bonusFP *= craftBonus * MultiBonusBeforeCap.landingCraftAll[0][enemyBefore];
       }
-      if (craftEx >= 1) bonusFP *= MultiBonusBeforeCap.craftEx[0][enemyBefore];
-      if (craftType89 + craftExType1 >= 1) bonusFP *= MultiBonusBeforeCap.craftType89[0][enemyBefore];
-      if (craftType89 + craftExType1 + craftExType97 + craftExType97Kai >= 2) bonusFP *= MultiBonusBeforeCap.craftType89[1][enemyBefore];
-      if (craftPanzerII >= 1) bonusFP *= MultiBonusBeforeCap.craftType89[0][enemyBefore];
-      if (craftPanzerII >= 2) bonusFP *= MultiBonusBeforeCap.craftType89[1][enemyBefore];
+      if (craftEx + craftExPanzerIIINAF + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusBeforeCap.craftEx[0][enemyBefore];
+      if (craftType89 + craftExType1 + craftExPanzerIIINAF + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusBeforeCap.craftType89[0][enemyBefore];
+      if (craftType89 + craftExType1 + craftExType97 + craftExType97Kai + craftExPanzerIIINAF + craftExPanzerIIIJ >= 2) bonusFP *= MultiBonusBeforeCap.craftType89[1][enemyBefore];
+      if (craftPanzerIINAF >= 1) bonusFP *= MultiBonusBeforeCap.craftType89[0][enemyBefore];
+      if (craftPanzerIINAF >= 2) bonusFP *= MultiBonusBeforeCap.craftType89[1][enemyBefore];
       if (rawAttackMode === 'day_shelling' && (craftArmed + craftAB >= 1)) bonusFP *= MultiBonusBeforeCap.craftArmed[0][enemyBefore];
       if (rawAttackMode === 'day_shelling' && (craftArmed + craftAB >= 2)) bonusFP *= MultiBonusBeforeCap.craftArmed[1][enemyBefore];
-      if (m4a1dd + craftExType97Kai >= 1) bonusFP *= MultiBonusBeforeCap.m4a1dd[0][enemyBefore];
+      if (m4a1dd + craftExType97Kai + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusBeforeCap.m4a1dd[0][enemyBefore];
       if (amphibiousTanksType2 >= 1) {
         bonusFP *= tankBonus * MultiBonusBeforeCap.amphibiousTanksType2[0][enemyBefore];
         if (amphibiousTanksType2 >= 2) {
@@ -218,7 +221,7 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
     }
 
     // 特殊登陆艇补正
-    if (craftEx11th + craftExType1 + craftExPanzerIII >= 1) bonusFP = bonusFP * 1.8 + 25;
+    if (craftEx11th + craftExType1 + craftExPanzerIIINAF + craftExPanzerIIIJ >= 1) bonusFP = bonusFP * 1.8 + 25;
     if (m4a1dd >= 1) bonusFP = bonusFP * 1.4 + 35;
     if (craftExType1 >= 1) bonusFP = bonusFP * 1.3 + 42;
     if (craftExType97 >= 1) bonusFP = bonusFP * 1.4 + 28;
@@ -227,8 +230,9 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
     // 登陆艇/内火艇套装补正
     const typeA = craftArmed;
     const typeB = craftAB;
-    const typeC = craft + craftEx + craftPanzerII + craftExType1;
-    const typeD = craftEx11th + craftExPanzerIII + amphibiousTanksType2 + craftExType97 + craftExType97Kai;
+    const typeC = craft + craftEx + craftPanzerIINAF + craftExType1;
+    const typeD = craftEx11th + craftExPanzerIIINAF + amphibiousTanksType2 + craftExType97 + craftExType97Kai + craftExPanzerIIIJ;    // 假设3j是D分组
+    // bug: (A=2且B=0) 或 (A=0且B=2)时，无套装补正
     if (!(typeA === 2 && typeB === 0) && !(typeA === 0 && typeB === 2)) {
       if ((typeA + typeB === 1) && (typeC + typeD >= 1)) {
         bonusFP = bonusFP * 1.2 + 10;
@@ -262,15 +266,15 @@ const checkBonusLB = (attackPower: number, shipState: IshipState, slotsArray: Is
       if (landingCraftAll >= 1) {
         bonusFP *= craftBonus * MultiBonusAfterCap.landingCraftAll[0][enemyAfter];
       }
-      if (craftEx >= 1) bonusFP *= MultiBonusAfterCap.craftEx[0][enemyAfter];
-      if (craftType89 + craftExType1 >= 1) bonusFP *= craftBonus * MultiBonusAfterCap.craftType89[0][enemyAfter];
-      if (craftType89 + craftExType1 + craftExType97 + craftExType97Kai >= 2) bonusFP *= MultiBonusAfterCap.craftType89[1][enemyAfter];
-      if (craftPanzerII >= 1) bonusFP *= craftBonus * MultiBonusAfterCap.craftType89[0][enemyAfter];
-      if (craftPanzerII >= 2) bonusFP *= MultiBonusAfterCap.craftType89[1][enemyAfter];
+      if (craftEx + craftExPanzerIIINAF + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusAfterCap.craftEx[0][enemyAfter];
+      if (craftType89 + craftExType1 + craftExPanzerIIINAF + craftExPanzerIIIJ >= 1) bonusFP *= craftBonus * MultiBonusAfterCap.craftType89[0][enemyAfter];
+      if (craftType89 + craftExType1 + craftExType97 + craftExType97Kai + craftExPanzerIIINAF + craftExPanzerIIIJ >= 2) bonusFP *= MultiBonusAfterCap.craftType89[1][enemyAfter];
+      if (craftPanzerIINAF >= 1) bonusFP *= craftBonus * MultiBonusAfterCap.craftType89[0][enemyAfter];
+      if (craftPanzerIINAF >= 2) bonusFP *= MultiBonusAfterCap.craftType89[1][enemyAfter];
       if (craftArmed + craftAB >= 1) bonusFP *= MultiBonusAfterCap.craftArmed[0][enemyAfter];
       if (craftArmed + craftAB >= 2) bonusFP *= MultiBonusAfterCap.craftArmed[1][enemyAfter];
-      if (m4a1dd + craftExType97Kai >= 1) bonusFP *= MultiBonusAfterCap.m4a1dd[0][enemyAfter];
-      if (craftEx11th + craftExPanzerIII + craftExType1 >= 1) bonusFP *= MultiBonusAfterCap.craftEx11th[0][enemyAfter];
+      if (m4a1dd + craftExType97Kai + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusAfterCap.m4a1dd[0][enemyAfter];
+      if (craftEx11th + craftExPanzerIIINAF + craftExType1 + craftExPanzerIIIJ >= 1) bonusFP *= MultiBonusAfterCap.craftEx11th[0][enemyAfter];
       if (amphibiousTanksType2 >= 1) bonusFP *= tankBonus * MultiBonusAfterCap.amphibiousTanksType2[0][enemyAfter];
       if (amphibiousTanksType2 >= 2) bonusFP *= MultiBonusAfterCap.amphibiousTanksType2[1][enemyAfter];
     }
